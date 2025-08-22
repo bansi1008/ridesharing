@@ -11,13 +11,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 
+
+
 public class Security {
 
      @Bean
     @Order(1)
     public SecurityFilterChain publicApiSecurityFilterChain(HttpSecurity http) throws Exception {
        http
-        .securityMatcher("/api/test/hello") 
+        .securityMatcher("/api/driver/me") 
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());  
         

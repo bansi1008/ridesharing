@@ -27,8 +27,8 @@ public class Jwtauth extends OncePerRequestFilter {
                                     FilterChain filterChain)
                                     throws ServletException, IOException {
         String token = extractToken(request);
-
-        System.out.println("Extracted Token: " + token);
+        
+        
 
         if (token != null && jwt.parseToken(token)) {
             Long userId = jwt.getUserId(token);
@@ -45,11 +45,11 @@ public class Jwtauth extends OncePerRequestFilter {
             
 List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
 UsernamePasswordAuthenticationToken authentication =
-        new UsernamePasswordAuthenticationToken(name, null, authorities);
+        new UsernamePasswordAuthenticationToken(role, null, authorities);
                 
             authentication.setDetails(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("Authentication set for user ID: " + userId + " with role:"+role + " and name: " + name);
+            
         }  
 
         filterChain.doFilter(request, response);

@@ -32,7 +32,7 @@ public class LocationConsumer {
             redisTemplate.opsForValue().set(driverId, lat + "," + lng);
 
             System.out.println("Stored driver " + driverId + " in Redis");
-            
+                 
         } catch (Exception e) {
             e.printStackTrace();
         }

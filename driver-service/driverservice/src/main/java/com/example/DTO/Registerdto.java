@@ -8,11 +8,12 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 
-public class Register {
+public class Registerdto {
+
     
-    private Long id;
-    private Long userId;
-    private String name;
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 100, message = "Name must be less than 100 characters")
+  private String name;
     @NotBlank(message = "License number cannot be blank")
     private String licenseNumber;
     @NotBlank(message = "Vehicle type cannot be blank")
