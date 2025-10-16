@@ -2,6 +2,8 @@ package com.ride.Controller;
 import com.ride.DTO.SignupDto;
 import com.ride.DTO.LoginDTO;
 import com.ride.DTO.MessageDTO;
+import com.ride.DTO.SignUpresponsedto;
+
 import io.jsonwebtoken.Claims;
 import com.ride.Model.Signupmodel;
 import com.ride.Servicelayer.Signuplayer;
@@ -30,20 +32,20 @@ public class Signupcon {
     private Signuplayer signuplayer;
 
     @PostMapping("/signup")
-    public MessageDTO signup(@Valid @RequestBody  SignupDto signupDto) {
+    public SignUpresponsedto signup(@Valid @RequestBody  SignupDto signupDto) {
         
-        Signupmodel signupModel = Signupmodel.builder()
-                .email(signupDto.getEmail())
-                .password(signupDto.getPassword())
-                .name(signupDto.getName())
-                .phone(signupDto.getPhone())
-                .role(signupDto.getRole())
-                .build();
+        // Signupmodel signupModel = Signupmodel.builder()
+        //         .email(signupDto.getEmail())
+        //         .password(signupDto.getPassword())
+        //         .name(signupDto.getName())
+        //         .phone(signupDto.getPhone())
+        //         .role(signupDto.getRole())
+        //         .build();
 
        
-        signuplayer.signup(signupModel);
+    Signupmodel user=  signuplayer.signup(signupDto);
 
-        return  new MessageDTO("User registered successfully");
+        return  new SignUpresponsedto("User registered successfully and user id is"+ user.getId().toString());
     }
 
     @PostMapping("/login")
@@ -53,8 +55,8 @@ public class Signupcon {
      Cookie cookie = new Cookie("ridesite_token", token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(60 * 60); // 1 hour
-        cookie.setSecure(true); // Set to true if using HTTPS
+        cookie.setMaxAge(60 * 60); 
+        cookie.setSecure(true); 
         response.addCookie(cookie);
 
      

@@ -4,11 +4,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
-public class MessageDTO {
- 
+public class SignUpresponsedto {
     private String message;
-    
     
 }

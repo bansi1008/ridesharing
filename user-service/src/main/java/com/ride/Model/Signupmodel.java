@@ -1,5 +1,6 @@
 package com.ride.Model;
 
+import com.ride.Model.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,8 +23,10 @@ public class Signupmodel {
     private String name;
     @Column(nullable = false)
     private String phone;
+    
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private Role role;
 
 
     
