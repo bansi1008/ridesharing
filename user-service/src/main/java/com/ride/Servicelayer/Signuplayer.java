@@ -63,6 +63,7 @@ public class Signuplayer {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
+        System.out.println("Generating token for user: " + user.getRole());
   return jwtUtility.generateToken(
                 user.getEmail(),
                 user.getRole(),

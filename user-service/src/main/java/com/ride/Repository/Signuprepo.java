@@ -13,3 +13,4 @@ public interface Signuprepo extends JpaRepository<Signupmodel, Long> {
 
     
 }
+     
