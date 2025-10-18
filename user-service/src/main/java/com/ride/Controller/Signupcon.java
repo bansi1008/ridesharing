@@ -3,6 +3,7 @@ import com.ride.DTO.SignupDto;
 import com.ride.DTO.LoginDTO;
 import com.ride.DTO.MessageDTO;
 import com.ride.DTO.SignUpresponsedto;
+import com.ride.Utility.JWT;
 
 import io.jsonwebtoken.Claims;
 import com.ride.Model.Signupmodel;
@@ -17,19 +18,27 @@ import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpServletResponse;
 
 
 
 @RestController
 @RequestMapping("/api")
-
+@Slf4j
 
 
 public class Signupcon {
 
     @Autowired
     private Signuplayer signuplayer;
+
+    private final JWT jwtUtility;
+
+    public Signupcon(JWT jwtUtility) {
+        this.jwtUtility = jwtUtility;
+        
+    }
 
     @PostMapping("/signup")
     public SignUpresponsedto signup(@Valid @RequestBody  SignupDto signupDto) {
@@ -49,9 +58,11 @@ public class Signupcon {
     }
 
     @PostMapping("/login")
-    public MessageDTO login(@Valid @RequestBody LoginDTO loginDTO,HttpServletResponse response) {
+    public ResponseEntity<MessageDTO> login(@Valid @RequestBody LoginDTO loginDTO,HttpServletResponse response) {
 
      String token= signuplayer.login(loginDTO.getEmail(), loginDTO.getPassword());
+     String refreshToken = jwtUtility.generateRefreshToken(loginDTO.getEmail());
+
      Cookie cookie = new Cookie("ridesite_token", token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
@@ -59,8 +70,16 @@ public class Signupcon {
         cookie.setSecure(true); 
         response.addCookie(cookie);
 
-     
-        return new MessageDTO("Login successful"); 
+        Cookie refreshCookie = new Cookie("ridesite_refresh", refreshToken);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/api/auth/refresh");
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+        refreshCookie.setSecure(true);
+        response.addCookie(refreshCookie);
+
+      log.info("User {} logged in successfully", loginDTO.getEmail());
+
+        return ResponseEntity.ok( new MessageDTO("Login successful")); 
      }
 
         @GetMapping("/me")
