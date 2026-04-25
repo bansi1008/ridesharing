@@ -1,4 +1,5 @@
 package com.ride.Controller;
+
 import com.ride.DTO.SignupDto;
 import com.ride.DTO.LoginDTO;
 import com.ride.DTO.MessageDTO;
@@ -21,12 +22,9 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpServletResponse;
 
-
-
 @RestController
 @RequestMapping("/api")
 @Slf4j
-
 
 public class Signupcon {
 
@@ -37,37 +35,27 @@ public class Signupcon {
 
     public Signupcon(JWT jwtUtility) {
         this.jwtUtility = jwtUtility;
-        
+
     }
 
     @PostMapping("/signup")
-    public SignUpresponsedto signup(@Valid @RequestBody  SignupDto signupDto) {
-        
-        // Signupmodel signupModel = Signupmodel.builder()
-        //         .email(signupDto.getEmail())
-        //         .password(signupDto.getPassword())
-        //         .name(signupDto.getName())
-        //         .phone(signupDto.getPhone())
-        //         .role(signupDto.getRole())
-        //         .build();
+    public SignUpresponsedto signup(@Valid @RequestBody SignupDto signupDto) {
+        Signupmodel user = signuplayer.signup(signupDto);
 
-       
-    Signupmodel user=  signuplayer.signup(signupDto);
-
-        return  new SignUpresponsedto("User registered successfully and user id is"+ user.getId().toString());
+        return new SignUpresponsedto("User registered successfully and user id is" + user.getId().toString());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MessageDTO> login(@Valid @RequestBody LoginDTO loginDTO,HttpServletResponse response) {
+    public ResponseEntity<MessageDTO> login(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
 
-     String token= signuplayer.login(loginDTO.getEmail(), loginDTO.getPassword());
-     String refreshToken = jwtUtility.generateRefreshToken(loginDTO.getEmail());
+        String token = signuplayer.login(loginDTO.getEmail(), loginDTO.getPassword());
+        String refreshToken = jwtUtility.generateRefreshToken(loginDTO.getEmail());
 
-     Cookie cookie = new Cookie("ridesite_token", token);
+        Cookie cookie = new Cookie("ridesite_token", token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(60 * 60); 
-        cookie.setSecure(true); 
+        cookie.setMaxAge(60 * 60);
+        cookie.setSecure(true);
         response.addCookie(cookie);
 
         Cookie refreshCookie = new Cookie("ridesite_refresh", refreshToken);
@@ -77,34 +65,33 @@ public class Signupcon {
         refreshCookie.setSecure(true);
         response.addCookie(refreshCookie);
 
-      log.info("User {} logged in successfully", loginDTO.getEmail());
+        log.info("User {} logged in successfully", loginDTO.getEmail());
 
-        return ResponseEntity.ok( new MessageDTO("Login successful")); 
-     }
+        return ResponseEntity.ok(new MessageDTO("Login successful"));
+    }
 
-        @GetMapping("/me")
-        public MessageDTO getCurrentUser(HttpServletRequest request) {
-            Claims claims = (Claims) request.getAttribute("claims");
-            if (claims == null) {
-                return new MessageDTO("No user information available");
-            }
-            String email = claims.getSubject();
-            String name = claims.get("name", String.class);
-            String role = claims.get("role", String.class);
-            
-            return new MessageDTO("Current user: " + name + " (" + email + ") with role: " + role);
+    @GetMapping("/me")
+    public MessageDTO getCurrentUser(HttpServletRequest request) {
+        Claims claims = (Claims) request.getAttribute("claims");
+        if (claims == null) {
+            return new MessageDTO("No user information available");
         }
+        String email = claims.getSubject();
+        String name = claims.get("name", String.class);
+        String role = claims.get("role", String.class);
 
-        @PostMapping("/logout")
-        public ResponseEntity<MessageDTO> logout(HttpServletResponse response) {
-            Cookie cookie = new Cookie("ridesite_token", null);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(0); 
-            response.addCookie(cookie);
+        return new MessageDTO("Current user: " + name + " (" + email + ") with role: " + role);
+    }
 
-            return ResponseEntity.ok(new MessageDTO("Logout successful"));
-        }
+    @PostMapping("/logout")
+    public ResponseEntity<MessageDTO> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("ridesite_token", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
 
-    
+        return ResponseEntity.ok(new MessageDTO("Logout successful"));
+    }
+
 }
