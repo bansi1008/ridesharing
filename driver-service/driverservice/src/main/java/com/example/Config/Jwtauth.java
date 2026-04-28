@@ -30,7 +30,14 @@ public class Jwtauth extends OncePerRequestFilter {
         
         
 
-        if (token != null && jwt.parseToken(token)) {
+        if (token != null) {
+            try {
+                jwt.parseToken(token);
+            } catch (RuntimeException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return;
+            }
+
             Long userId = jwt.getUserId(token);
             String role = jwt.getRole(token);
            String name = jwt.getName(token);

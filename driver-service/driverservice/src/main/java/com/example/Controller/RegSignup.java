@@ -1,4 +1,5 @@
 package com.example.Controller;
+
 import com.example.Servicelayer.Registerlayer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,16 +21,30 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.security.core.Authentication;
 import com.example.Config.Security;
 import jakarta.validation.Valid;
-
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/")
 
+public class RegSignup {
 
-public class Test {
+    @Autowired
+    private Registerlayer registerlayer;
 
-  @Autowired
-  private Registerlayer registerlayer;
+    @GetMapping("/health")
+    public Map<String, String> getHe() {
+        Map<String, String> res = new HashMap<>();
+        res.put("status", "ok");
+
+        return res;
+
+    }
+
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
 
     @PostMapping("/driver/register")
     public String testuser(Authentication authentication, @Valid @RequestBody Registerdto register) {
@@ -37,57 +52,53 @@ public class Test {
         if (authentication == null) {
             return "No authentication found.";
         }
-        
+
         boolean isDriver = authentication.getAuthorities().stream()
-            .anyMatch(auth -> auth.getAuthority().equals("ROLE_DRIVER"));
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_DRIVER"));
 
         if (isDriver) {
-            
 
-        registerlayer.registerDriver(register);
+            registerlayer.registerDriver(register);
             return "Driver registration successful.";
         } else {
             return "User is not a driver.";
         }
-       
-      
-    
+
     }
+
     @PutMapping("/driver/livelocation")
     public String Location(Authentication authentication, @Valid @RequestBody Locdto locdto) {
         if (authentication == null) {
             return "No authentication found.";
         }
-        
+
         boolean isDriver = authentication.getAuthorities().stream()
-            .anyMatch(auth -> auth.getAuthority().equals("ROLE_DRIVER"));
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_DRIVER"));
 
         if (isDriver) {
-           
+
             registerlayer.locationupdate(locdto);
-           
+
         } else {
             return "User is not a driver.";
         }
         return "Driver location updated successfully.";
     }
 
-        @GetMapping("driver/me") 
-     public ResponseEntity<DriverProfileResponseDTO> me(Authentication authentication)
-     {
-            if (authentication == null) {
+    @GetMapping("driver/me")
+    public ResponseEntity<DriverProfileResponseDTO> me(Authentication authentication) {
+        if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        
+
         boolean isDriver = authentication.getAuthorities().stream()
-            .anyMatch(auth -> auth.getAuthority().equals("ROLE_DRIVER"));
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_DRIVER"));
 
         if (!isDriver) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-    } 
-       DriverProfileResponseDTO profile = registerlayer.getCurrentDriverProfile();
-    return ResponseEntity.ok(profile);       
-     }
-   
-    
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        DriverProfileResponseDTO profile = registerlayer.getCurrentDriverProfile();
+        return ResponseEntity.ok(profile);
+    }
+
 }
