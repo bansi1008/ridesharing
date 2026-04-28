@@ -1,19 +1,18 @@
 package com.example.Model;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "register") 
+@Table(name = "register")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 
-
-
 public class Registermodel {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -21,7 +20,7 @@ public class Registermodel {
 
     @Column(nullable = false)
     private String name;
-    
+
     @Column(nullable = false, unique = true)
     private String licenseNumber;
 
@@ -36,8 +35,4 @@ public class Registermodel {
     @Column(nullable = false)
     private java.time.LocalDateTime updatedAt = java.time.LocalDateTime.now();
 
-
-
-    
 }
-
