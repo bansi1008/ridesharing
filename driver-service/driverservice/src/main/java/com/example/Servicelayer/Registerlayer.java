@@ -78,7 +78,7 @@ public class Registerlayer {
                 .build();
 
         locrepo.save(loc);
-
+        System.out.println("Location updated for driver ID: " + userIdd);
         return "Driver location updated successfully";
     }
 
